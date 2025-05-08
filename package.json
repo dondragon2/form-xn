@@ -47,8 +47,9 @@
     "@remix-run/react": ">=2"
   },
   "optionalDependencies": {
-    "zod": "*",
-    "@remix-run/react": "*"
+    "@remix-run/react": "*",
+    "yup": "*",
+    "zod": "*"
   },
   "license": "Apache-2.0",
   "author": "Donald Walters",
