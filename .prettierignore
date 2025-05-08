@@ -1,0 +1,9 @@
+dist
+node_modules
+*.log
+.github
+.vscode
+.idea
+.gitignore
+.prettierignore
+bun.lock
