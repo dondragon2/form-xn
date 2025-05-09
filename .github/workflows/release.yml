@@ -1,4 +1,4 @@
-name: Release & Publish (Bun + npm)
+name: Release & Publish
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
           name: form-xn-dist
           path: dist/
 
-      - name: 🚀 Publish to npm
-        run: npm publish --access public
+      - name: 🚀 Publish to npm registry
+        run: bun publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

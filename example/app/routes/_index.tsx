@@ -6,9 +6,9 @@ import {
   createActions,
   useClientFormErrors,
   zodValidator,
-} from "../../../src";
+} from "form-xn";
 import React, { useEffect } from "react";
-import { uuid } from "uuidv4";
+import { v4 as uuid } from "uuid";
 
 type Todo = {
   id: string;

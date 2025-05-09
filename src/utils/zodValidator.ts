@@ -1,10 +1,10 @@
-import { z } from 'zod';
+import type { ZodType } from 'zod';
 import type { SafeValidator, SafeValidationResult } from '../types';
 
 /**
  * Adapter to make Zod behave like a SafeValidator<T>
  */
-export function zodValidator<P, T>(schema: z.ZodType<T>): SafeValidator<P, T> {
+export function zodValidator<P, T>(schema: ZodType<T>): SafeValidator<P, T> {
   return {
     safeParse(input: P): SafeValidationResult<T> {
       const result = schema.safeParse(input);

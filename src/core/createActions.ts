@@ -7,8 +7,9 @@ import type { ValidatedHandlerContext, ActionFormMap, SafeValidationResult } fro
  * - A simple Remix ActionFunction
  * - Or a validated handler with a validator + handler
  */
-export function createActions<M extends ActionFormMap>(handlers: M) {
-  return async function action(args: ActionFunctionArgs): Promise<Response> {
+export const createActions =
+  <M extends ActionFormMap>(handlers: M) =>
+  async (args: ActionFunctionArgs): Promise<Response> => {
     const formData = await args.request.formData();
     const intent = formData.get('_action');
 
@@ -51,4 +52,3 @@ export function createActions<M extends ActionFormMap>(handlers: M) {
 
     return handler.handler(context);
   };
-}

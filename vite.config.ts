@@ -5,19 +5,28 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
   plugins: [react(), dts()],
   define: {
-    "process.env.NODE_ENV": '"production"',
+    'process.env.NODE_ENV': '"production"',
   },
   build: {
     sourcemap: true,
     minify: true,
+    copyPublicDir: false,
     lib: {
-      entry: "src/index.ts",
-      name: "FormXN",
-      formats: ["es", "cjs"],
-      fileName: (format) => `index.${format === "es" ? "js" : "cjs"}`,
+      entry: 'src/index.ts',
+      name: 'FormXN',
+      formats: ['es'],
+      fileName: 'index.js',
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        '@remix-run/node',
+        '@remix-run/react',
+        'yup',
+        'zod',
+      ],
     },
   },
 });

@@ -1,6 +1,6 @@
-# @uluru/form-xn
+# form-xn
 
-Composable multi-action form handling for **Remix** and **React** — with first-class support for validation libraries like **Zod**, **Yup**, or anything that supports `safeParse()`.
+Composable multi-action form handling for **[Remix](https://remix.run/)** — with first-class support for validation libraries like **Zod**, **Yup**, or anything that supports `safeParse()`.
 
 ---
 
@@ -9,7 +9,6 @@ Composable multi-action form handling for **Remix** and **React** — with first
 - 🔁 Supports **multiple named actions** per route via `_action`
 - ✅ Works with any validation library (Zod, Yup, etc.)
 - 📦 Compatible with Remix server actions and client-side React validation
-- 🧠 Fully type-safe handlers (via `InferActionInput`)
 - 🧼 Zero styling assumptions — use your own UI
 
 ---
@@ -17,9 +16,9 @@ Composable multi-action form handling for **Remix** and **React** — with first
 ## 📦 Installation
 
 ```bash
-bun add @uluru/form-xn
+bun add form-xn
 # or
-npm install @uluru/form-xn
+npm install form-xn
 ```
 
 ---
@@ -30,7 +29,7 @@ npm install @uluru/form-xn
 
 ```ts
 // routes/action.ts
-import { createActions } from '@uluru/form-xn';
+import { createActions } from 'form-xn';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -56,8 +55,8 @@ export const action = createActions({
 ### 2. Alternative: Use Yup schema
 
 ```ts
-import { createActions } from '@uluru/form-xn';
-import { yupValidator } from '@uluru/form-xn/utils/yupValidator';
+import { createActions } from 'form-xn';
+import { yupValidator } from 'form-xn/utils/yupValidator';
 import * as yup from 'yup';
 
 const updateSchema = yup.object({
@@ -83,30 +82,62 @@ The `<ActionForm />` component is a flexible wrapper that supports:
 
 - ✅ `children`: for static layout
 - ✅ `render`: for dynamic UI with inline access to `errors`
-- ✅ `useFormErrors()`: to access errors in deeply nested components
+- ✅ `useClientFormErrors()`: to access errors in deeply nested components
 
 ### ✅ Basic Example with `children`
 
 ```tsx
 <ActionForm
   action="updateTodo?id=123"
-  validator={schema}
 >
   <input name="title" />
   <button type="submit">Submit</button>
 </ActionForm>
 ```
 
-To access validation errors when using `children`, use:
+### ✅ Client-side validation
+To access validation errors when using client-side validation, use:
 
 ```tsx
-const errors = useFormErrors();
-{errors.title && <span>{errors.title}</span>}
+const todoSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+});
+
+export const Page = () => {
+    return (
+        <ActionForm
+            action="updateTodo?id=123"
+            validator={schema}
+        >
+            <TodoFormFields todo={{ title: 'test' }} />
+            <button type="submit">Submit</button>
+        </ActionForm>
+    );
+}
+    
+
+
+const TodoFormFields = ({todo}: { todo?: Todo }) => {
+    const errors = useClientFormErrors();
+
+    return (
+        <div className="flex flex-col flex-1 gap-3">
+          <textarea
+              defaultValue={todo?.title ?? ''}
+              className="border p-4 rounded-lg flex-1"
+              name="title"
+          ></textarea>
+            {errors?.title && (
+                <p className="text-red-500 text-sm">{errors.title}</p>
+            )}
+        </div>
+    )
+}
 ```
 
 ---
 
-### ✅ Dynamic UI with `render`
+### ✅ Client-side validation Dynamic UI with `render`
 
 When using the `render` prop, `ActionForm` gives you direct access to validation errors.
 
@@ -114,17 +145,16 @@ When using the `render` prop, `ActionForm` gives you direct access to validation
 <ActionForm
   action="updateTodo?id=123"
   validator={schema}
-  render={({ errors }) => (
+>
+  {({ errors }) => (
     <>
       <input name="title" />
       {errors.title && <span style={{ color: 'red' }}>{errors.title}</span>}
       <button type="submit">Save</button>
     </>
   )}
-/>
+</ActionForm>
 ```
-
-> ✅ If `children` is provided, it takes precedence over `render`.
 
 ---
 
@@ -132,10 +162,9 @@ When using the `render` prop, `ActionForm` gives you direct access to validation
 
 ```ts
 type ActionFormProps = {
-  action: string;
-  validator?: SafeValidator<any>;
-  children?: React.ReactNode;
-  render?: (args: { errors: Record<string, string> }) => React.ReactNode;
+    action: string;
+    validator?: SafeValidator<any, any>;
+    children?: ReactNode | ((args: { errors: FormErrorMap }) => ReactNode);
 };
 ```
 
@@ -149,6 +178,14 @@ type ActionFormProps = {
 buildFormAction('updateTodo', { id: 123 });
 // => "updateTodo?id=123"
 ```
+
+---
+
+### 🧾 `zodValidator(schema)`
+
+Wrap a Zod schema into a `safeParse()`-compatible object.
+
+---
 
 ---
 
@@ -166,4 +203,4 @@ Apache 2.0
 
 ## 🧩 Want to Contribute?
 
-Pull requests and issues welcome!
+Pull requests and Issues welcome!
